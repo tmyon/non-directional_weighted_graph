@@ -17,27 +17,19 @@ public class Graph {
     public void createEdge(int id1, int id2, int weight){
         Node v1 = getNode(id1);
         Node v2 = getNode(id2);
-        if (v1 != null){
-            if (v2 != null){
-                if (v1 != v2){
-                    if (getEdge(id1, id2) == null && getEdge(id2, id1) == null){
-                        edges.add(new Edge(v1, v2, weight));
-                        System.out.println("[GRAPH] An edge with weight " + weight + " between nodes " + id1 + " and " + id2 + " has been added to the graph.");
-                    }
-                    else{
-                        System.out.println("[GRAPH] An edge between nodes " + id1 + " and " + id2 + " already exists in the graph.");
-                    }
+        if (weight >= 0) {
+            if (v1 != null) {
+                if (v2 != null) {
+                    edges.add(new Edge(v1, v2, weight));
+                    System.out.println("[GRAPH] An edge with weight " + weight + " between nodes " + id1 + " and " + id2 + " has been added to the graph.");
+                } else {
+                    System.out.println("[GRAPH] Node with ID " + id2 + " doesn't exist in the graph.");
                 }
-                else{
-                    System.out.println("[GRAPH] Node IDs must be different.");
-                }
+            } else {
+                System.out.println("[GRAPH] Node with ID " + id1 + " doesn't exist in the graph.");
             }
-            else{
-                System.out.println("[GRAPH] Node with ID " + id2 + " doesn't exist in the graph.");
-            }
-        }
-        else{
-            System.out.println("[GRAPH] Node with ID " + id1 + " doesn't exist in the graph.");
+        } else {
+            System.out.println("[GRAPH] (" + weight + ") Weight cannot be less than 0.");
         }
     }
 
