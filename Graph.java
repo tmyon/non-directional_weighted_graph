@@ -1,49 +1,126 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Graph {
     private List<Node> nodes = new ArrayList<Node>();
     private List<Edge> edges = new ArrayList<Edge>();
+
+    public int countNodes(){
+        return nodes.size();
+    }
+
+    public int countEdges(){
+        return edges.size();
+    }
+
+    public int shortestPath(int startNodeID, int destinationNodeID){
+        Node startNode = getNode(startNodeID);
+        Node endNode = getNode(destinationNodeID);
+
+        if (startNode != null && endNode != null) {
+            for (Node node : nodes) {
+                node.pathCost = Integer.MAX_VALUE;
+                node.previousNode = null;
+            }
+
+            startNode.pathCost = 0;
+
+            List<Node> unvisitedNodes = new ArrayList<>(nodes);
+
+            while (!unvisitedNodes.isEmpty()) {
+                Node currentNode = getMinimumCostNode(unvisitedNodes);
+
+                if (currentNode.pathCost == Integer.MAX_VALUE) {
+                    break;
+                }
+
+                unvisitedNodes.remove(currentNode);
+
+                for (Edge edge : getEdges(currentNode.id)) {
+                    Node neighbor = getOtherNode(currentNode, edge);
+                    int newCost = currentNode.pathCost + edge.weight;
+
+                    if (newCost < neighbor.pathCost) {
+                        neighbor.pathCost = newCost;
+                        neighbor.previousNode = currentNode;
+                    }
+                }
+            }
+
+            return endNode.pathCost;
+        }
+
+        return -1;
+    }
+
+    private Node getMinimumCostNode(List<Node> nodes) {
+        Node minNode = null;
+        int minCost = Integer.MAX_VALUE;
+
+        for (Node node : nodes) {
+            if (node.pathCost < minCost) {
+                minCost = node.pathCost;
+                minNode = node;
+            }
+        }
+
+        return minNode;
+    }
+
+    private Node getOtherNode(Node a, Edge b){
+        if (b.v1 == a){
+            return b.v2;
+        }
+        else{
+            return b.v1;
+        }
+    }
+
     public void createNode(int id){
         if (getNode(id) == null){
             nodes.add(new Node(id));
-            System.out.println("[GRAPH] Node with ID " + id + " has been added to the graph.");
+            // System.out.println("[Graph] Added node with id " + id);
         }
         else{
-            System.out.println("[GRAPH] Node with ID " + id + " already exists in the graph.");
+            // System.out.println("[Graph] There already is a node with id " + id);
         }
     }
 
     public void createEdge(int id1, int id2, int weight){
         Node v1 = getNode(id1);
         Node v2 = getNode(id2);
-        if (weight >= 0) {
-            if (v1 != null) {
-                if (v2 != null) {
+        if (weight >= 0){
+            if (v1 != null){
+                if (v2 != null){
                     edges.add(new Edge(v1, v2, weight));
-                    System.out.println("[GRAPH] An edge with weight " + weight + " between nodes " + id1 + " and " + id2 + " has been added to the graph.");
-                } else {
-                    System.out.println("[GRAPH] Node with ID " + id2 + " doesn't exist in the graph.");
+                    // System.out.println("[Graph] Added edge with weight " + weight + ", and node ids " + id1 + " and " + id2);
                 }
-            } else {
-                System.out.println("[GRAPH] Node with ID " + id1 + " doesn't exist in the graph.");
+                else{
+                    // System.out.println("[Graph] Couldn't find node with id " + id2);
+                }
             }
-        } else {
-            System.out.println("[GRAPH] (" + weight + ") Weight cannot be less than 0.");
+            else{
+                // System.out.println("[Graph] Couldn't find node with id " + id1);
+            }
         }
+        else{
+            // System.out.println("[Graph] Weight must be 0 or above");
+        }
+
     }
 
     public void removeEdge(int id1, int id2){
         if (getEdge(id1, id2) != null){
             edges.remove(getEdge(id1, id2));
-            System.out.println("[GRAPH] Edge between nodes " + id1 + " and " + id2 + " has been removed from the graph.");
+            // System.out.println("[Graph] Removed edge with ids " + id1 + " and " + id2);
         }
         else if (getEdge(id2, id1) != null){
             edges.remove(getEdge(id2, id1));
-            System.out.println("[GRAPH] Edge between nodes " + id2 + " and " + id1 + " has been removed from the graph.");
+            // System.out.println("[Graph] Removed edge with ids " + id2 + " and " + id1);
         }
         else{
-            System.out.println("[GRAPH] No edge exists between nodes " + id1 + " and " + id2 + " in the graph.");
+            // System.out.println("[Graph] There is no edge with ids " + id1 + " and " + id2);
         }
     }
 
@@ -56,16 +133,16 @@ public class Graph {
             if (edgesToRemove != null){
                 int i;
                 for (i = 0; i < edgesToRemove.size(); i++){
-                    System.out.println("[GRAPH] Edge with weight " + edgesToRemove.get(i).weight + " between nodes " + edgesToRemove.get(i).v1.id + " and " + edgesToRemove.get(i).v2.id + " has been removed from the graph.");
+                    // System.out.println("[Graph] Removed edge with weight " + edgesToRemove.get(i).weight + " and ids " + edgesToRemove.get(i).v1.id + " and " + edgesToRemove.get(i).v2.id);
                     edges.remove(edgesToRemove.get(i));
                 }
             }
 
             nodes.remove(node);
-            System.out.println("[GRAPH] Node with ID " + id + " has been removed from the graph.");
+            // System.out.println("[Graph] Removed node with id " + id);
         }
         else{
-            System.out.println("[GRAPH] Node with ID " + id + " doesn't exist in the graph.");
+            // System.out.println("[Graph] There is no node with id " + id);
         }
     }
 
@@ -100,7 +177,6 @@ public class Graph {
 
         return edgesTemp;
     }
-
 
     private Edge getEdge(int id1, int id2){
         if (edges != null){
