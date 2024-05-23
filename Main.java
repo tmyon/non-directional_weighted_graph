@@ -29,12 +29,21 @@ public class Main {
         System.out.println("[Main] Shortest path cost: " + graph.shortestPath(1, 4));
         System.out.println("[Main] Shortest path cost: " + graph.shortestPath(3, 6));
 
-        List<Edge> mst = graph.kruskal();
+        List<Edge> mstKruskal = graph.kruskal();
 
         System.out.println("[Main][Kruskal] Minimum Spanning Tree edges:");
-        for (Edge edge : mst) {
+        for (Edge edge : mstKruskal) {
             System.out.println("Edge from " + edge.v1.id + " to " + edge.v2.id + " with weight " + edge.weight);
         }
+
+        List<Edge> mstPrim = graph.prim();
+
+        System.out.println("[Main][Prim] Minimum Spanning Tree edges:");
+        for (Edge edge : mstPrim) {
+            System.out.println("Edge from " + edge.v1.id + " to " + edge.v2.id + " with weight " + edge.weight);
+        }
+
+
 
     }
 }

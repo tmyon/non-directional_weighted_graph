@@ -238,7 +238,7 @@ public class Graph {
         List<Edge> mst = new ArrayList<>();
         edges.sort(Comparator.comparingInt(o -> o.weight));
 
-        UnionFind uf = new UnionFind(nodes.size());
+        UnionFind uf = new UnionFind(nodes.size() + 1);
 
         for (Edge edge : edges) {
             int node1 = edge.v1.id;
@@ -251,5 +251,60 @@ public class Graph {
         }
 
         return mst;
+    }
+//metoda Prima
+    public List<Edge> prim() {
+        int[] parent = new int[nodes.size() + 1];
+        int[] key = new int[nodes.size() + 1];
+        Boolean[] mstSet = new Boolean[nodes.size() + 1];
+
+        for (int i = 1; i <= nodes.size(); i++) {
+            key[i] = Integer.MAX_VALUE;
+            mstSet[i] = false;
+        }
+
+        key[1] = 0;
+        parent[1] = -1;
+
+        for (int count = 1; count <= nodes.size(); count++) {
+            int u = minKey(key, mstSet);
+
+            if (u == -1) {
+                break;
+            }
+
+            mstSet[u] = true;
+
+            for (Edge edge : edges) {
+                int v = (edge.v1.id == u) ? edge.v2.id : edge.v1.id;
+                if (!mstSet[v] && edge.weight < key[v]) {
+                    parent[v] = u;
+                    key[v] = edge.weight;
+                }
+            }
+        }
+
+        List<Edge> mst = new ArrayList<>();
+        for (int i = 2; i <= nodes.size(); i++) {
+            Node parentNode = getNode(parent[i]);
+            Node childNode = getNode(i);
+            if (parentNode != null && childNode != null) {
+                mst.add(new Edge(parentNode, childNode, key[i]));
+            }
+        }
+
+        return mst;
+    }
+
+    private int minKey(int key[], Boolean mstSet[]) {
+        int min = Integer.MAX_VALUE, min_index = -1;
+
+        for (int v = 1; v <= nodes.size(); v++)
+            if (!mstSet[v] && key[v] < min) {
+                min = key[v];
+                min_index = v;
+            }
+
+        return min_index;
     }
 }
