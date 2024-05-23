@@ -43,7 +43,7 @@ public class Main {
             System.out.println("Edge from " + edge.v1.id + " to " + edge.v2.id + " with weight " + edge.weight);
         }
 
-
+        System.out.println("Chromatic number: " + graph.chromaticNumber());
 
     }
 }

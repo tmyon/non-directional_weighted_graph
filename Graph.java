@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Arrays;
 
 public class Graph {
     private List<Node> nodes = new ArrayList<Node>();
@@ -307,4 +308,46 @@ public class Graph {
 
         return min_index;
     }
+//minimalna liczba chromatyczna
+    public int chromaticNumber() {
+        int result[] = new int[nodes.size() + 1];
+
+        Arrays.fill(result, -1);
+
+        result[1] = 0;
+
+        boolean available[] = new boolean[nodes.size() + 1];
+        Arrays.fill(available, true);
+
+        for (int u = 2; u <= nodes.size(); u++) {
+            for (Edge i : edges) {
+                if (i.v1.id == u) {
+                    if (result[i.v2.id] != -1)
+                        available[result[i.v2.id]] = false;
+                } else if (i.v2.id == u) {
+                    if (result[i.v1.id] != -1)
+                        available[result[i.v1.id]] = false;
+                }
+            }
+
+            int cr;
+            for (cr = 0; cr < nodes.size(); cr++) {
+                if (available[cr])
+                    break;
+            }
+
+            result[u] = cr;
+
+            Arrays.fill(available, true);
+        }
+
+        int maxColor = 0;
+        for (int i = 1; i <= nodes.size(); i++) {
+            if (result[i] > maxColor)
+                maxColor = result[i];
+        }
+
+        return maxColor + 1;
+    }
+
 }
