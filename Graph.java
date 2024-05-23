@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class Graph {
@@ -190,5 +191,65 @@ public class Graph {
 
         // System.out.println("[Graph] No edge found with that ids");
         return null;
+    }
+//metoda Kruskala
+    class UnionFind {
+        private int[] parent;
+        private int[] rank;
+
+        public UnionFind(int size) {
+            parent = new int[size + 1];
+            rank = new int[size + 1];
+
+            for (int i = 1; i <= size; i++) {
+                parent[i] = i;
+                rank[i] = 0;
+            }
+        }
+
+        public int find(int node) {
+            if (parent[node] != node) {
+                parent[node] = find(parent[node]);
+            }
+
+            return parent[node];
+        }
+
+        public void union(int node1, int node2) {
+            int root1 = find(node1);
+            int root2 = find(node2);
+
+            if (root1 == root2) {
+                return;
+            }
+
+            if (rank[root1] > rank[root2]) {
+                parent[root2] = root1;
+            } else if (rank[root1] < rank[root2]) {
+                parent[root1] = root2;
+            } else {
+                parent[root2] = root1;
+                rank[root1]++;
+            }
+        }
+    }
+
+    public List<Edge> kruskal() {
+        List<Edge> mst = new ArrayList<>();
+        edges.sort(Comparator.comparingInt(o -> o.weight));
+
+        UnionFind uf = new UnionFind(nodes.size());
+
+        for (Edge edge : edges) {
+            int node1 = edge.v1.id;
+            int node2 = edge.v2.id;
+
+            if (uf.find(node1) != uf.find(node2)) {
+                uf.union(node1, node2);
+                mst.add(edge);
+            }
+        }
+
+        return mst;
     }
 }

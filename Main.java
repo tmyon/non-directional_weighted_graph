@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -26,5 +28,13 @@ public class Main {
         System.out.println("[Main] Shortest path cost between " + node1 + " and " + node2 + " is " + graph.shortestPath(node1, node2));
         System.out.println("[Main] Shortest path cost: " + graph.shortestPath(1, 4));
         System.out.println("[Main] Shortest path cost: " + graph.shortestPath(3, 6));
+
+        List<Edge> mst = graph.kruskal();
+
+        System.out.println("[Main][Kruskal] Minimum Spanning Tree edges:");
+        for (Edge edge : mst) {
+            System.out.println("Edge from " + edge.v1.id + " to " + edge.v2.id + " with weight " + edge.weight);
+        }
+
     }
 }
